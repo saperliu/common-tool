@@ -1,10 +1,10 @@
 package ali_rocketmq
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
 	"context"
 	"github.com/aliyunmq/mq-http-go-sdk"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
 )
 
 type AliRocketClient struct {

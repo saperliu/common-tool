@@ -1,12 +1,12 @@
 package mysql
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
-	"common-tool/vo"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
+	"github.com/saperliu/common-tool/vo"
 	"strconv"
 	"time"
 )

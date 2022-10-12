@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"common-tool/vo"
 	"fmt"
+	"github.com/saperliu/common-tool/vo"
 	"testing"
 	"time"
 )

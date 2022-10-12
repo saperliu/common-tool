@@ -1,8 +1,8 @@
 package dd
 
 import (
-	"common-tool/logger"
 	"crypto/tls"
+	"github.com/saperliu/common-tool/logger"
 	"io/ioutil"
 	"net/http"
 	"strings"

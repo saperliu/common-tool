@@ -1,10 +1,10 @@
 package ali_tsdb
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
-	"common-tool/vo"
 	"encoding/json"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
+	"github.com/saperliu/common-tool/vo"
 	"strconv"
 	"strings"
 	"time"

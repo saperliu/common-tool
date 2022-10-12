@@ -1,13 +1,13 @@
 package rocketmq_client
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
 	"context"
 	"github.com/apache/rocketmq-client-go/v2"
 	"github.com/apache/rocketmq-client-go/v2/consumer"
 	"github.com/apache/rocketmq-client-go/v2/primitive"
 	"github.com/apache/rocketmq-client-go/v2/producer"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
 	"os"
 )
 

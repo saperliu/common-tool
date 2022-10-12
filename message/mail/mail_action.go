@@ -1,7 +1,7 @@
 package mail
 
 import (
-	"common-tool/logger"
+	"github.com/saperliu/common-tool/logger"
 	"gopkg.in/gomail.v2"
 	"io/ioutil"
 	"os/exec"

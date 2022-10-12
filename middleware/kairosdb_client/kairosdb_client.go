@@ -1,10 +1,10 @@
 package kairosdb_client
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
-	"common-tool/vo"
 	"github.com/json-iterator/go"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
+	"github.com/saperliu/common-tool/vo"
 	"github.com/saperliu/go-kairosdb/builder"
 	"github.com/saperliu/go-kairosdb/client"
 	"strconv"

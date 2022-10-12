@@ -1,9 +1,9 @@
 package kafka_client
 
 import (
-	"common-tool/logger"
 	"errors"
 	"github.com/childe/healer"
+	"github.com/saperliu/common-tool/logger"
 	"github.com/segmentio/kafka-go"
 	"strings"
 )

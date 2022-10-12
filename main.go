@@ -1,8 +1,8 @@
 package main
 
 import (
-	"common-tool/common"
-	"common-tool/logger"
+	"github.com/saperliu/common-tool/common"
+	"github.com/saperliu/common-tool/logger"
 	"github.com/spf13/viper"
 )
 

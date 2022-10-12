@@ -1,8 +1,8 @@
 package common
 
 import (
-	"common-tool/logger"
 	"encoding/binary"
+	"github.com/saperliu/common-tool/logger"
 	"math"
 	"math/rand"
 	"os"
@@ -37,31 +37,31 @@ func ByteToFloat64(bytes []byte) float64 {
 	return math.Float64frombits(bits)
 }
 
-//整形转换成字节
+// 整形转换成字节
 func IntToBytes(n int32) []byte {
 	var buf = make([]byte, 4)
 	binary.BigEndian.PutUint32(buf, uint32(n))
 	return buf
 }
 
-//字节转换成整形
+// 字节转换成整形
 func BytesToInt16(buf []byte) int16 {
 	return int16(binary.BigEndian.Uint16(buf))
 }
 
-//字节转换成整形
+// 字节转换成整形
 func BytesToInt(buf []byte) int32 {
 	return int32(binary.BigEndian.Uint32(buf))
 }
 
-//整型转字节
+// 整型转字节
 func Int64ToBytes(n int64) []byte {
 	var buf = make([]byte, 8)
 	binary.BigEndian.PutUint64(buf, uint64(n))
 	return buf
 }
 
-//字节转整型
+// 字节转整型
 func BytesToInt64(buf []byte) int64 {
 	return int64(binary.BigEndian.Uint64(buf))
 }
@@ -192,7 +192,7 @@ func NumberToString(a interface{}) string {
 	return a.(string)
 }
 
-//此方法需要配合上面的 IsNumeric 一起使用
+// 此方法需要配合上面的 IsNumeric 一起使用
 func InterfaceToNumeric(val interface{}) interface{} {
 	switch val.(type) {
 	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
