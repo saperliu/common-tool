@@ -1,6 +1,9 @@
-module common-tool
+module github.com/saperliu/common-tool
 
 go 1.19
+
+// 这里是重点，即项目中"github.com/saperliu/common-tool"相关引用路径会替换成项目根路径
+replace github.com/saperliu/common-tool => ./
 
 require (
 	github.com/aliyunmq/mq-http-go-sdk v1.0.3
