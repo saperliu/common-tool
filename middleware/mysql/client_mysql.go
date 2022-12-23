@@ -83,7 +83,7 @@ func (database *Database) checkTableExist(table string) bool {
 	}
 }
 func (database *Database) createTable(table string) bool {
-	sql := fmt.Sprintf("CREATE TABLE `%s` (\n  `id` varchar(36) COLLATE utf8mb4_bin NOT NULL,\n  `timestamp` timestamp NULL DEFAULT NULL COMMENT '记录时间',\n  `value` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '点位值',\n  `longitude` float DEFAULT NULL COMMENT '经度',\n  `latitude` float DEFAULT NULL COMMENT '纬度',\n  `speed` float DEFAULT NULL COMMENT '速度 单位：km/h',\n  `direction` int DEFAULT NULL COMMENT '方向 范围为[0,359]，0度为正北方向，顺时针',\n  `accuracy` float DEFAULT NULL COMMENT '定位精度 单位：米',\n  `height` float DEFAULT NULL COMMENT '高度, 单位：米',\n  `status` int DEFAULT NULL COMMENT '状态 //0 正常,-1 离线, 1 通讯异常,2 数据越界',\n  `site_id` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '站点',\n  `org_id` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '组织',\n  `data_type` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '数据类型  normal  普通数据 enerbos GPS数据自定义数据  perfect 自定义的带数据描述的数据',\n  PRIMARY KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;", table)
+	sql := fmt.Sprintf("CREATE TABLE `%s` (\n  `id` varchar(36) COLLATE utf8mb4_bin NOT NULL,\n  `timestamp` datetime NULL DEFAULT NULL COMMENT '记录时间',\n  `value` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '点位值',\n  `longitude` float DEFAULT NULL COMMENT '经度',\n  `latitude` float DEFAULT NULL COMMENT '纬度',\n  `speed` float DEFAULT NULL COMMENT '速度 单位：km/h',\n  `direction` int DEFAULT NULL COMMENT '方向 范围为[0,359]，0度为正北方向，顺时针',\n  `accuracy` float DEFAULT NULL COMMENT '定位精度 单位：米',\n  `height` float DEFAULT NULL COMMENT '高度, 单位：米',\n  `status` int DEFAULT NULL COMMENT '状态 //0 正常,-1 离线, 1 通讯异常,2 数据越界',\n  `site_id` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '站点',\n  `org_id` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '组织',\n  `data_type` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '数据类型  normal  普通数据 enerbos GPS数据自定义数据  perfect 自定义的带数据描述的数据',\n  PRIMARY KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;", table)
 	_, err := database.DB.Exec(sql)
 
 	if err != nil {
@@ -129,6 +129,54 @@ func (database *Database) insertHisData(table string, val *vo.StoreHisData, id s
 	}
 }
 
+func (database *Database) findPointData(table string, tageId string, startTime string, endTime string) (listPoint []vo.StorePoint) {
+
+	sqlQuery := fmt.Sprintf("select `id`, `timestamp`, `value`, `longitude`, `latitude`, `speed`, `direction`, `accuracy`, `height`, `status`, `site_id`, `org_id`, `data_type` from `%s`  order by  timestamp desc ", table)
+
+	if startTime != "" && endTime != "" {
+		sqlQuery = "select `id`, `timestamp`, `value`, `longitude`, `latitude`, `speed`, `direction`, `accuracy`, `height`, `status`, `site_id`, `org_id`, `data_type` from `" + table + "`  where  DATE_FORMAT(`timestamp`,'%Y-%m-%d %H:%i:%s') >= '" + startTime + "' and  DATE_FORMAT(`timestamp`,'%Y-%m-%d %H:%i:%s') <= '" + endTime + "'  order by  timestamp desc "
+	} else {
+		// 默认只查询最近30天的数据
+		endTime = time.Now().Format("2006-01-02 15:04:05")
+		startTime = time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
+		sqlQuery = "select `id`, `timestamp`, `value`, `longitude`, `latitude`, `speed`, `direction`, `accuracy`, `height`, `status`, `site_id`, `org_id`, `data_type` from `" + table + "`  where  DATE_FORMAT(`timestamp`,'%Y-%m-%d %H:%i:%s') >= '" + startTime + "' and  DATE_FORMAT(`timestamp`,'%Y-%m-%d %H:%i:%s') <= '" + endTime + "'  order by  timestamp desc "
+
+	}
+	fmt.Printf("  point  query  %s ", sqlQuery)
+	rows, err := database.DB.Query(sqlQuery)
+	if err != nil {
+		logger.Error("Query  point  error: %s , table: %s,  time: %s  %s ", err.Error(), table, startTime, endTime)
+		panic(err.Error())
+	}
+	defer rows.Close()
+	var list []vo.StorePoint
+	for rows.Next() {
+
+		sp := vo.StorePoint{}
+		err = rows.Scan(&sp.Id, &sp.Timestamp, &sp.Value, &sp.Longitude, &sp.Latitude, &sp.Speed, &sp.Direction, &sp.Accuracy, &sp.Height, &sp.Status, &sp.SiteId, &sp.OrgId, &sp.DataType)
+		sp.Tagid = tageId
+		list = append(list, sp)
+
+		if err != nil {
+			logger.Error("Query  rows.Scan  error: %s , table: %s,  time: %s  %s ", err.Error(), table, startTime, endTime)
+			panic(err.Error())
+		}
+	}
+	return list
+
+}
+
+func (database *Database) delData(table string, id string) bool {
+
+	_, err1 := database.DB.Exec("delete  from "+table+" where id = ?", id)
+	if err1 != nil {
+		logger.Error("insert  point = error: %s , table: %s,  data: %s", err1.Error(), table, id)
+		return false
+	} else {
+		return true
+	}
+}
+
 func (database *Database) SaveStorePoint(storePointVo vo.StorePoint) {
 
 	if database.checkTableExist(database.TablePrefix + storePointVo.Tagid) {
@@ -159,4 +207,26 @@ func (database *Database) SaveHisPoint(storePointVo vo.StoreHisData) {
 			logger.Error("insert  point  error , table: %s,  data: %v ", storePointVo.Tagid, storePointVo)
 		}
 	}
+}
+
+func (database *Database) FindPointData(tagId string, startTime string, endTime string) (list []vo.StorePoint) {
+
+	if database.checkTableExist(database.TablePrefix + tagId) {
+		// 表存大直接保存数据
+		return database.findPointData(database.TablePrefix+tagId, tagId, startTime, endTime)
+	} else {
+		logger.Error("insert  point  error , table: %s  not exits. ", tagId)
+	}
+	return nil
+}
+
+func (database *Database) DelPointData(tagId string, id string) bool {
+
+	if database.checkTableExist(database.TablePrefix + tagId) {
+		// 删除数据
+		return database.delData(database.TablePrefix+tagId, id)
+	} else {
+		logger.Error("insert  point  error , table: %s  not exits. ", tagId)
+	}
+	return false
 }

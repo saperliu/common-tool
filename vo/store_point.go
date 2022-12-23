@@ -4,6 +4,7 @@ package vo
  * 计算结果后的数据的存储的格式
  */
 type StorePoint struct {
+	Id              string  `json:"id"`              //数据的id，mysql存储时使用
 	Tagid           string  `json:"tagid"`           //点位id
 	Timestamp       string  `json:"timestamp"`       //记录时间
 	Value           string  `json:"value"`           //点位值
